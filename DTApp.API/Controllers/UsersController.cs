@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using DTApp.API.Data;
@@ -35,6 +37,22 @@ namespace DTApp.API.Controllers
             var user = await _DataRepo.GetUser(id);
             var userToReturn =_mapper.Map<UserForDetailedDto>(user);
             return Ok(userToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDTO updateUser)
+        {
+            if(id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+            var user = await _DataRepo.GetUser(id);
+            _mapper.Map(updateUser, user);
+            if(await _DataRepo.SaveAll())
+                return NoContent();
+            throw new Exception($"Update failed for User {id}");
+
+
         }
     }
 }

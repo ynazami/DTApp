@@ -27,6 +27,8 @@ namespace DTApp.API.Helper
                     }
                 );
             CreateMap<Photo,  PhotoDto>();
+
+            CreateMap<UserForUpdateDTO, User>();
         }
     }
 }
