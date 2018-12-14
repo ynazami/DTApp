@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DTApp.API.Data;
 using DTApp.API.DTO;
 using DTApp.API.Models;
@@ -18,9 +19,12 @@ namespace DTApp.API.Controllers
     {
         private readonly IAuthRepository _repository;
         private readonly IConfiguration _config;
-        public AuthController(IAuthRepository repository, IConfiguration config)
+        private readonly IMapper _mapper;
+
+        public AuthController(IAuthRepository repository, IConfiguration config, IMapper mapper)
         {
             this._config = config;
+            this._mapper = mapper;
             this._repository = repository;
 
         }
@@ -51,7 +55,11 @@ namespace DTApp.API.Controllers
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescrip);
-            return Ok(new {token = tokenHandler.WriteToken(token)});
+            var returnUser = _mapper.Map<UserForListDto>(userData);
+            return Ok(new {
+                            token = tokenHandler.WriteToken(token),
+                            user = returnUser        
+                        });
 
         }
         [HttpPost("register")]

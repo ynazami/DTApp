@@ -14,5 +14,7 @@ namespace DTApp.API.Data
          Task<IEnumerable<User>> GetUsers();
 
          Task<User> GetUser(int userID);
+
+         Task<Photo> GetPhoto(int id);
     }
 }

@@ -1,10 +1,12 @@
 using System;
 
-namespace DTApp.API.Models
+namespace DTApp.API.DTO
 {
-    public class Photo
+    public class PhotoForReturnDto
     {
         public int Id { get; set; }
+
+        public string PublicId {get; set;}
         public string Url { get; set; }
 
         public string Description { get; set; }
@@ -12,11 +14,5 @@ namespace DTApp.API.Models
         public DateTime DateAdded { get; set; }
 
         public bool IsMain { get; set; }
-
-        public string PublicId { get; set; }
-
-        public User User { get; set;}
-
-        public int UserId { get; set; }
     }
 }

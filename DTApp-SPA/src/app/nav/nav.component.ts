@@ -10,9 +10,11 @@ import { Router } from '@angular/router';
 })
 export class NavComponent implements OnInit {
   model: any = {};
+  photoUrl: string;
   constructor(public authService: AuthService, private alertService: AlertifyService, private router: Router) { }
 
   ngOnInit() {
+    this.authService.currentPhotoUrl.subscribe(photoUrl => this.photoUrl = photoUrl );
   }
 
   login() {
@@ -26,7 +28,7 @@ export class NavComponent implements OnInit {
         this.alertService.warning('Login Failed ' + error);
     },
     () => {
-        this.router.navigate(['/members']);        
+        this.router.navigate(['/members']);
     });
   }
 
@@ -39,6 +41,9 @@ export class NavComponent implements OnInit {
   logOut() {
     this.alertService.message('Logged Out');
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.authService.decodedToken = null;
+    this.authService.currentUser = null;
     this.router.navigate(['/home']);
   }
 

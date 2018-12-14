@@ -40,6 +40,7 @@ namespace DTApp.API
                     opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 }
             );
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddCors();
             services.AddAutoMapper();
             services.AddScoped<IAuthRepository,AuthRepository>();

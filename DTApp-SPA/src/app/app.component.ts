@@ -8,7 +8,7 @@ import { AuthService } from './_services/Auth.service';
 })
 export class AppComponent implements OnInit {
   ngOnInit(): void {
-    this.authService.SetToken();
+    this.authService.SetTokenAndUser();
   }
 
   constructor(private authService: AuthService) {
