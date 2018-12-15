@@ -42,6 +42,7 @@ namespace DTApp.API
             );
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddCors();
+            services.AddScoped<LogUserActivity>();
             services.AddAutoMapper();
             services.AddScoped<IAuthRepository,AuthRepository>();
             services.AddScoped<IDatingRepository,DatingRepository>();

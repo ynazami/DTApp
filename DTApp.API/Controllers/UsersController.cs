@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DTApp.API.Data;
 using DTApp.API.DTO;
+using DTApp.API.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DTApp.API.Controllers
 {
+    [ServiceFilter(typeof(LogUserActivity))]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
