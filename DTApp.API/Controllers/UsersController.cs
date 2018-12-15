@@ -31,7 +31,7 @@ namespace DTApp.API.Controllers
             return Ok(usersToReturn);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}",Name="GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
             var user = await _DataRepo.GetUser(id);

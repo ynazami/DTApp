@@ -74,14 +74,12 @@ namespace DTApp.API.Controllers
                 return BadRequest("Username already exists");
             }
 
-            var userToCreate = new User
-            {
-                Username = user.Username
-            };
+            User userToCreate = _mapper.Map<User>(user);
 
             userToCreate = await _repository.Register(userToCreate, user.Password);
+            var userDetail = _mapper.Map<UserForDetailedDto>(userToCreate);
 
-            return StatusCode(201);
+            return CreatedAtRoute("GetUser", new { controller="Users", id=userToCreate.Id},userDetail);
         }
     }
 }
