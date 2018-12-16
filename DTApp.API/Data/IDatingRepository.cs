@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DTApp.API.Helper;
 using DTApp.API.Models;
 
 namespace DTApp.API.Data
@@ -11,7 +12,7 @@ namespace DTApp.API.Data
 
          Task<bool> SaveAll();
 
-         Task<IEnumerable<User>> GetUsers();
+         Task<PagedList<User>> GetUsers(UserParams userParams);
 
          Task<User> GetUser(int userID);
 

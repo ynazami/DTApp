@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DTApp.API.Helper;
 using DTApp.API.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System;
 
 namespace DTApp.API.Data
 {
@@ -35,9 +38,32 @@ namespace DTApp.API.Data
             return await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(p => p.Id == userID);
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-            return await _context.Users.Include(p => p.Photos).ToListAsync();
+            var users = _context.Users.Include(p => p.Photos).OrderByDescending(p => p.LastActive).AsQueryable();
+            users = users.Where(p => p.Id != userParams.UserId && p.Gender == userParams.Gender);
+
+            
+
+            if(userParams.MinimumAge != 18 || userParams.MaximumAge != 99)
+            {
+                var minDOB = DateTime.Today.AddYears(-userParams.MaximumAge-1);
+                var maxDOB = DateTime.Today.AddYears(-userParams.MinimumAge);
+                users = users.Where(m => m.DateOfBirth >= minDOB && m.DateOfBirth <= maxDOB);
+            }
+
+            if(!string.IsNullOrEmpty(userParams.OrderBy)) {
+                switch(userParams.OrderBy)
+                {
+                    case "created":
+                        users = users.OrderByDescending(p => p.Created);
+                        break;
+                    default:
+                        users = users.OrderByDescending(p => p.LastActive);
+                        break;
+                }
+            }
+            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<bool> SaveAll()

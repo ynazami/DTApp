@@ -26,10 +26,20 @@ namespace DTApp.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
         {
-            var users = await _DataRepo.GetUsers(); 
+            int currentUser = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            userParams.UserId = currentUser;
+            
+            if(string.IsNullOrEmpty(userParams.Gender))
+            {
+                var userFromRepo = await _DataRepo.GetUser(currentUser);
+                userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
+
+            }
+            var users = await _DataRepo.GetUsers(userParams); 
             var usersToReturn =_mapper.Map<IEnumerable<UserForListDto>>(users);
+            Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotlaPages);
             return Ok(usersToReturn);
         }
 
