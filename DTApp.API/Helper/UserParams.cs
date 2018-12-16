@@ -19,6 +19,10 @@ namespace DTApp.API.Helper
         public int MaximumAge { get; set; } = 99;
 
         public string OrderBy { get; set; }
+
+        public bool Likers { get; set; }
+
+        public bool Likees { get; set; }
         
     }
 }

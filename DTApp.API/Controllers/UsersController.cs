@@ -6,6 +6,7 @@ using AutoMapper;
 using DTApp.API.Data;
 using DTApp.API.DTO;
 using DTApp.API.Helper;
+using DTApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,8 +64,41 @@ namespace DTApp.API.Controllers
             if(await _DataRepo.SaveAll())
                 return NoContent();
             throw new Exception($"Update failed for User {id}");
+        }
 
+        [HttpPost("{id}/like/{recipientId}")]
+        public async Task<IActionResult> LikeUser(int id, int recipientId)
+        {
+           if(id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+           {
+                return Unauthorized();
+           }
 
+           var like = await _DataRepo.GetLike(id, recipientId);
+           if(like != null)
+           {
+               return BadRequest("You already liked this user");
+           }
+
+           var likedUser = await _DataRepo.GetUser(recipientId);
+
+           if(likedUser == null)
+           {
+               return NotFound();
+           }
+
+           like = new Like {
+               LikerId = id,
+               LikeeId = recipientId
+           };
+
+           _DataRepo.Add(like);
+
+           if(await _DataRepo.SaveAll())
+           {
+               return Ok();
+           }
+           return BadRequest("Failed to Like User");
         }
     }
 }

@@ -27,6 +27,11 @@ namespace DTApp.API.Data
             _context.Remove(entity);
         }
 
+        public async Task<Like> GetLike(int userId, int recipientId)
+        {
+            return await _context.Likes.FirstOrDefaultAsync(m => m.LikerId == userId && m.LikeeId == recipientId);
+        }
+
         public async Task<Photo> GetPhoto(int id)
         {
             var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
@@ -52,6 +57,20 @@ namespace DTApp.API.Data
                 users = users.Where(m => m.DateOfBirth >= minDOB && m.DateOfBirth <= maxDOB);
             }
 
+            
+
+            if(userParams.Likers)
+            {
+                var userLikers = await GetUserLikes(userParams.UserId, userParams.Likers);    
+                users = users.Where(p => userLikers.Contains(p.Id));
+            }
+
+            if(userParams.Likees)
+            {
+                var userLikees = await GetUserLikes(userParams.UserId, userParams.Likers);    
+                users = users.Where(p => userLikees.Contains(p.Id));
+            }
+
             if(!string.IsNullOrEmpty(userParams.OrderBy)) {
                 switch(userParams.OrderBy)
                 {
@@ -64,6 +83,20 @@ namespace DTApp.API.Data
                 }
             }
             return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
+        }
+
+        private async Task<IEnumerable<int>> GetUserLikes(int userId, bool likers)
+        {
+            var user = await _context.Users.Include(p => p.Likees).Include(p => p.Likers).FirstOrDefaultAsync(p => p.Id == userId);
+
+            if(likers)
+            {
+                return user.Likers.Where(u => u.LikeeId == userId).Select(p => p.LikerId);
+            }
+            else
+            {
+                return user.Likees.Where(u => u.LikerId == userId).Select(p => p.LikeeId);
+            }
         }
 
         public async Task<bool> SaveAll()

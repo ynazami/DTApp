@@ -17,5 +17,7 @@ namespace DTApp.API.Data
          Task<User> GetUser(int userID);
 
          Task<Photo> GetPhoto(int id);
+
+         Task<Like> GetLike(int userId, int recipientId);
     }
 }
