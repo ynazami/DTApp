@@ -86,7 +86,14 @@ namespace DTApp.API
             app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             //app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseMvc(routes => {
+                routes.MapSpaFallbackRoute(
+                    name:"spa-fallback",
+                    defaults: new {Controller="Fallback", action = "Index"}
+                );
+            });
         }
     }
 }
